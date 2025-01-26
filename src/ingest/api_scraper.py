@@ -36,19 +36,20 @@ def get_listings()->dict:
     response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
     return response
 
-#creating a mapping for how many cars there are in each brand from listings info
-def generate_brands_dict(listing_info:dict)->dict:
+#creating a mapping for how many cars there are in each brand from raw listings response
+def generate_brands_dict(listings:dict)->dict:
     brands_dict = {}
     types = ["popular", "luxury", "others"]
     for type in types:
-        for brand in listing_info["data"]["filters"]["brand"]["data"][type]:
+        for brand in listings["data"]["filters"]["brand"]["data"][type]:
             brands_dict[brand["v"]] = brand["c"]
     return brands_dict
 
 #getting a list of all the listed cars by brand
-def get_brand_cars(brand:str,brands_dict:dict)->dict:
+def get_brand_cars(brand:str,brands_dict:dict)->list:
     brand_name = brand
     cnt = brands_dict[brand]
+    cars=[]
     url = "https://listing.cardekho.com/api/v1/srp-listings"
     payload=""
     headers = {
@@ -76,7 +77,22 @@ def get_brand_cars(brand:str,brands_dict:dict)->dict:
                        "carsAd": "[]", "device": "web",
                        "userLat": "", "userLng": ""}
         response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
-        return response
+        for car in response['data']['cars']:
+            used_car = {
+                'id':car['usedCarId'],
+                'variantid':car['centralVariantId'],
+                'bodytype':car['bt'],
+                'city':car['city'],
+                'price':car['msp'],
+                'fueltype':car['ft'],
+                'mileage':car['km'],
+                'make':car['oem'],
+                'model':car['model'],
+                'gear':car['tt'],
+                'owner':car['ownerSlug']
+            }
+            cars.append(used_car)
+    return cars
 
 #get variant info for a given variant id
 def get_variant_info(variantid:int)->dict:
