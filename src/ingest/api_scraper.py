@@ -78,11 +78,18 @@ def get_brand_cars(brand:str,brands_dict:dict)->dict:
         response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
         return response
 
-
-
-with open('test.json','w') as f
-    json.dump(response,f)
-
+#get variant info for a given variant id
+def get_variant_info(variantid:int)->dict:
+    payload = ""
+    headers = {
+        "cookie": "cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d; firstUTMParamter=direct%23none%23null",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+    }
+    querystring_variant = {f"cityId": "105", "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
+                           "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed", "lang_code": "en", "regionId": "0",
+                           "otherinfo": "all", "variantId": {variantid}}
+    response_variant = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring_variant).text)
+    return response_variant
 
 
 
