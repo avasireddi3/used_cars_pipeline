@@ -78,19 +78,19 @@ def get_brand_cars(brand:str,brands_dict:dict)->list:
                        "userLat": "", "userLng": ""}
         response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
         for car in response['data']['cars']:
-            used_car = {
-                'id':car['usedCarId'],
-                'variant_id':car['centralVariantId'],
-                'bodytype':car['bt'],
-                'city':car['city'],
-                'price':car['msp'],
-                'fueltype':car['ft'],
-                'mileage':car['km'],
-                'make':car['oem'],
-                'model':car['model'],
-                'gear':car['tt'],
-                'owner':car['ownerSlug']
-            }
+            used_car = [
+                car['usedCarId'],
+                car['centralVariantId'],
+                car['bt'],
+                car['city'],
+                car['msp'],
+                car['ft'],
+                car['km'],
+                car['oem'],
+                car['model'],
+                car['tt'],
+                car['ownerSlug']
+            ]
             cars.append(used_car)
     return cars
 
