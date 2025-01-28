@@ -80,7 +80,7 @@ def get_brand_cars(brand:str,brands_dict:dict)->list:
         for car in response['data']['cars']:
             used_car = {
                 'id':car['usedCarId'],
-                'variantid':car['centralVariantId'],
+                'variant_id':car['centralVariantId'],
                 'bodytype':car['bt'],
                 'city':car['city'],
                 'price':car['msp'],
@@ -95,17 +95,42 @@ def get_brand_cars(brand:str,brands_dict:dict)->list:
     return cars
 
 #get variant info for a given variant id
-def get_variant_info(variantid:int)->dict:
+def get_variant_info(variant_id:int)->list:
     payload = ""
+    url = "https://www.cardekho.com/api/v1/usedcar/specs"
     headers = {
         "cookie": "cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d; firstUTMParamter=direct%23none%23null",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     }
     querystring_variant = {f"cityId": "105", "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
                            "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed", "lang_code": "en", "regionId": "0",
-                           "otherinfo": "all", "variantId": {variantid}}
+                           "otherinfo": "all", "variantId": {variant_id}}
     response_variant = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring_variant).text)
-    return response_variant
+    specs={}
+    for item in response_variant['data']['carSpecification']['top']:
+        specs[item['key']] = item['value']
+    for heading in response_variant['data']['carSpecification']['data']:
+        for item in heading['list']:
+            specs[item['key']] = item['value']
+    variant_spec_names = ('engine_cc','ground_clearance',
+                          'mileage_kmpl','drive_type','seating',
+                          'power','cylinders','gearbox','top_speed_kmph',
+                          'enc','length_mm','width_mm','height_mm')
+
+    spec_names = ('Engine','Ground Clearance Unladen','Mileage',
+                    'Drive Type','Seating Capacity','Power','No. of Cylinders',
+                    'Gearbox','Top Speed','Emission Norm Compliance','Length',
+                    'Width','Height')
+
+    variant_info= {'variant_id': variant_id}
+
+    for i,name in enumerate(variant_spec_names):
+        try:
+            variant_info[name]=specs[spec_names[i]]
+        except KeyError:
+            variant_info[name]=0
+
+    return list(variant_info.values())
 
 
 
