@@ -10,10 +10,41 @@ def insert_listings(listings_df:pl.DataFrame)->None:
         listings_df.write_database(
             table_name="listings_demo_2",
             connection=conn,
-            if_table_exists='replace'
+            if_table_exists="replace"
         )
+
+def get_listings_db()->pl.DataFrame:
+    with engine.connect() as conn:
         df = pl.read_database(
             connection=conn,
-            query="SELECT * FROM listings_demo_2 LIMIT 5"
+            query="SELECT * FROM listings_demo_2"
         )
-    print(df.head())
+    return df
+
+def insert_variants(variants_df:pl.DataFrame)->None:
+    with engine.connect() as conn:
+        variants_df.write_database(
+            table_name="variants_demo_2",
+            connection=conn,
+            if_table_exists="replace"
+        )
+
+def get_variants_db()->pl.DataFrame:
+    with engine.connect() as conn:
+        df = pl.read_database(
+            connection=conn,
+            query="SELECT * FROM variants_demo_2"
+        )
+    return df
+
+def get_missing_variants(listings_df:pl.DataFrame)->list:
+    """get missing variant ids from a listings dataframe"""
+    variants_df = get_variants_db()
+    missing_variants = listings_df.join(
+        other=variants_df,
+        how="left",
+        left_on="variant_id",
+        right_on="variant_id",
+        suffix="_1"
+    ).filter(pl.col("variant_id_1").is_null())
+    return missing_variants.get_column("variant_id").to_list()

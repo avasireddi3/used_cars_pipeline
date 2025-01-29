@@ -59,3 +59,4 @@ def string_operations_variants(df:pl.DataFrame)->pl.DataFrame:
         pl.col("height_mm").str.replace_all(" mm", "").cast(pl.Int16))
 
 
+
