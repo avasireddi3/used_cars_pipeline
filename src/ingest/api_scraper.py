@@ -1,44 +1,55 @@
 import requests
 import json
-import type_classes
 
-def get_listings()->dict:
+
+def get_listings() -> dict:
     """get raw listings information from api"""
-    #url to get listings info
+    # url to get listings info
     url = "https://listing.cardekho.com/api/v1/srp-listings"
-    payload=""
-    #headers for the request
+    payload = ""
+    # headers for the request
     headers = {
-            "cookie": "cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d; firstUTMParamter=direct%23none%23null",
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
-        }
-    #query details specifying that we want all the cars in bengaluru
-    querystring = {"cityId":"105",
-                   "connectoid":"a223ce8e-09eb-2670-52c8-170d94d8ddad",
-                   "sessionid":"c99f39fe3c0b18e3a027c0d3791ac0ed",
-                   "lang_code":"en",
-                   "regionId":"0",
-                   "searchstring":"used-cars+in+bangalore",
-                   "pagefrom":"0",
-                   "sortby":"created_date",
-                   "sortorder":"desc",
-                   "mink":"",
-                   "maxk":"",
-                   "dealer_id":"null",
-                   "regCityNames":"",
-                   "regStateNames":"",
-                   "cellValue":"",
-                   "pagination":"{}",
-                   "carsAd":"[]",
-                   "device":"web",
-                   "userLat":"",
-                   "userLng":""}
-    #getting response in the form of a dictionary from a json using the parameters specified above
-    response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
+        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
+        firstUTMParamter=direct%23none%23null""",
+        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
+    }
+    # query details specifying that we want all the cars in bengaluru
+    querystring = {
+        "cityId": "105",
+        "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
+        "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed",
+        "lang_code": "en",
+        "regionId": "0",
+        "searchstring": "used-cars+in+bangalore",
+        "pagefrom": "0",
+        "sortby": "created_date",
+        "sortorder": "desc",
+        "mink": "",
+        "maxk": "",
+        "dealer_id": "null",
+        "regCityNames": "",
+        "regStateNames": "",
+        "cellValue": "",
+        "pagination": "{}",
+        "carsAd": "[]",
+        "device": "web",
+        "userLat": "",
+        "userLng": "",
+    }
+    # getting response in the form of a dictionary
+    # from a json using the parameters specified above
+    response = json.loads(
+        requests.request(
+            "GET", url, data=payload, headers=headers, params=querystring
+        ).text
+    )
     return response
 
-#creating a mapping for how many cars there are in each brand from raw listings response
-def generate_brands_dict(listings:dict)->dict:
+
+# creating a mapping for how many cars there are in each brand
+# from raw listings response
+def generate_brands_dict(listings: dict) -> dict:
     """generate a mapping of brand to number of listings"""
     brands_dict = {}
     types = ["popular", "luxury", "others"]
@@ -47,103 +58,142 @@ def generate_brands_dict(listings:dict)->dict:
             brands_dict[brand["v"]] = brand["c"]
     return brands_dict
 
-#getting a list of all the listed cars by brand
-def get_brand_cars(brand:str,brands_dict:dict)->list:
+
+# getting a list of all the listed cars by brand
+def get_brand_cars(brand: str, brands_dict: dict) -> list:
     """get listings info for all the cars of a brand"""
     brand_name = brand
     cnt = brands_dict[brand]
-    cars=[]
+    cars = []
     url = "https://listing.cardekho.com/api/v1/srp-listings"
-    payload=""
+    payload = ""
     headers = {
-        "cookie": "cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d; firstUTMParamter=direct%23none%23null",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
+        firstUTMParamter=direct%23none%23null""",
+        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+        (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
     }
     for i in range(0, cnt, 20):
         from_page = i
-        querystring = {f"cityId": "105",
-                       "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
-                       "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed",
-                       "lang_code": "en",
-                       "regionId": "0",
-                       "searchstring": {brand_name},
-                       "pagefrom": {from_page},
-                       "sortby": "created_date",
-                       "sortorder": "desc",
-                       "mink": "",
-                       "maxk": "",
-                       "dealer_id": "null",
-                       "regCityNames": "",
-                       "regStateNames": "",
-                       "cellValue": "",
-                       "pagination": "{\"common\":0,\"commonFeature\":0,\"carAd\":0}",
-                       "carsAd": "[]", "device": "web",
-                       "userLat": "", "userLng": ""}
-        response = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring).text)
-        for car in response['data']['cars']:
+        querystring = {
+            "cityId": "105",
+            "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
+            "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed",
+            "lang_code": "en",
+            "regionId": "0",
+            "searchstring": brand_name,
+            "pagefrom": from_page,
+            "sortby": "created_date",
+            "sortorder": "desc",
+            "mink": "",
+            "maxk": "",
+            "dealer_id": "null",
+            "regCityNames": "",
+            "regStateNames": "",
+            "cellValue": "",
+            "pagination": '{"common":0,"commonFeature":0,"carAd":0}',
+            "carsAd": "[]",
+            "device": "web",
+            "userLat": "",
+            "userLng": "",
+        }
+        response = json.loads(
+            requests.request(
+                "GET", url, data=payload, headers=headers, params=querystring
+            ).text
+        )
+        for car in response["data"]["cars"]:
             used_car = [
-                car['usedCarId'],
-                car['centralVariantId'],
-                car['bt'],
-                car['city'],
-                car['msp'],
-                car['ft'],
-                car['km'],
-                car['oem'],
-                car['model'],
-                car['tt'],
-                car['ownerSlug']
+                car["usedCarId"],
+                car["centralVariantId"],
+                car["bt"],
+                car["city"],
+                car["msp"],
+                car["ft"],
+                car["km"],
+                car["oem"],
+                car["model"],
+                car["tt"],
+                car["ownerSlug"],
             ]
             cars.append(used_car)
     return cars
 
 
-def get_variant_info(variant_ids:list)->list:
+def get_variant_info(variant_ids: list) -> list:
     """get variants info for a given list of variant ids"""
     payload = ""
     url = "https://www.cardekho.com/api/v1/usedcar/specs"
     headers = {
-        "cookie": "cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d; firstUTMParamter=direct%23none%23null",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
+                    firstUTMParamter=direct%23none%23null""",
+        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+                    (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
     }
     variants_info = []
     for variant_id in variant_ids:
 
-        querystring_variant = {f"cityId": "105", "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
-                               "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed", "lang_code": "en", "regionId": "0",
-                               "otherinfo": "all", "variantId": {variant_id}}
+        querystring_variant = {
+            "cityId": "105",
+            "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
+            "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed",
+            "lang_code": "en",
+            "regionId": "0",
+            "otherinfo": "all",
+            "variantId": variant_id,
+        }
 
-        response_variant = json.loads(requests.request("GET", url, data=payload, headers=headers, params=querystring_variant).text)
-        specs={}
-        for item in response_variant['data']['carSpecification']['top']:
-            specs[item['key']] = item['value']
-        for heading in response_variant['data']['carSpecification']['data']:
-            for item in heading['list']:
-                specs[item['key']] = item['value']
-        variant_spec_names = ('engine_cc','ground_clearance',
-                              'mileage_kmpl','drive_type','seating',
-                              'power','cylinders','gearbox','top_speed_kmph',
-                              'enc','length_mm','width_mm','height_mm')
+        response_variant = json.loads(
+            requests.request(
+                "GET", url, data=payload, headers=headers, params=querystring_variant
+            ).text
+        )
+        specs = {}
+        for item in response_variant["data"]["carSpecification"]["top"]:
+            specs[item["key"]] = item["value"]
+        for heading in response_variant["data"]["carSpecification"]["data"]:
+            for item in heading["list"]:
+                specs[item["key"]] = item["value"]
+        variant_spec_names = (
+            "engine_cc",
+            "ground_clearance",
+            "mileage_kmpl",
+            "drive_type",
+            "seating",
+            "power",
+            "cylinders",
+            "gearbox",
+            "top_speed_kmph",
+            "enc",
+            "length_mm",
+            "width_mm",
+            "height_mm",
+        )
 
-        spec_names = ('Engine','Ground Clearance Unladen','Mileage',
-                        'Drive Type','Seating Capacity','Power','No. of Cylinders',
-                        'Gearbox','Top Speed','Emission Norm Compliance','Length',
-                        'Width','Height')
+        spec_names = (
+            "Engine",
+            "Ground Clearance Unladen",
+            "Mileage",
+            "Drive Type",
+            "Seating Capacity",
+            "Power",
+            "No. of Cylinders",
+            "Gearbox",
+            "Top Speed",
+            "Emission Norm Compliance",
+            "Length",
+            "Width",
+            "Height",
+        )
 
-        variant_info= {'variant_id': variant_id}
+        variant_info = {"variant_id": variant_id}
 
-        for i,name in enumerate(variant_spec_names):
+        for i, name in enumerate(variant_spec_names):
             try:
-                variant_info[name]=specs[spec_names[i]]
+                variant_info[name] = specs[spec_names[i]]
             except KeyError:
-                variant_info[name]=0
+                variant_info[name] = 0
 
         variants_info.append(list(variant_info.values()))
 
-
     return variants_info
-
-
-
-
-
