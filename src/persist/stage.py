@@ -1,3 +1,5 @@
+import datetime
+
 import polars as pl
 from sqlalchemy import create_engine
 
@@ -47,3 +49,37 @@ def get_missing_variants(listings_df: pl.DataFrame) -> list:
         suffix="_1",
     ).filter(pl.col("variant_id_1").is_null())
     return missing_variants.get_column("variant_id").to_list()
+
+def insert_sold_listings(sold_ids:list)->None:
+    data = [
+        pl.Series("id",sold_ids),
+        pl.Series("status",["sold"]*len(sold_ids)),
+        pl.Series("timestamp", [datetime.datetime.now()]*len(sold_ids))
+    ]
+    insert_df = pl.DataFrame(data)
+    with engine.connect() as conn:
+        insert_df.write_database(
+            table_name='sold_status_demo',
+            connection=conn,
+            if_table_exists='append'
+        )
+
+def insert_unsold_listings(unsold_ids:list)->None:
+    data = [
+        pl.Series("id", unsold_ids),
+        pl.Series("status", ["unsold"] * len(unsold_ids)),
+        pl.Series("timestamp", [datetime.datetime.now()] * len(unsold_ids))
+    ]
+    insert_df = pl.DataFrame(data)
+    with engine.connect() as conn:
+        insert_df.write_database(
+            table_name='sold_status_demo',
+            connection=conn,
+            if_table_exists='append'
+        )
+
+def get_sold_db() -> pl.DataFrame:
+    """get the sold table as a dataframe"""
+    with engine.connect() as conn:
+        df = pl.read_database(connection=conn, query="SELECT * FROM sold_status_demo")
+    return df
