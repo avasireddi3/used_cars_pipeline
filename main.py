@@ -1,8 +1,10 @@
-import json
+import polars as pl
+import sqlalchemy.exc
+
 from src.ingest import api_scraper
-from src.ingest.api_scraper import generate_brands_dict, get_brand_cars
-from src.persist import load
-from src.persist.load import check_variant_exists, insert_variant, check_listing_exists
+from src.ingest.api_scraper import generate_brands_dict, get_brand_cars, get_variant_info
+from src.persist.stage import insert_listings, get_variants_db, insert_variants, get_missing_variants
+from src.transform.transform_data import initialize_df_listings, string_operations_listings, initialize_df_variant
 
 
 def main():
@@ -15,21 +17,25 @@ def main():
     #     brand_cars = get_brand_cars(brand, brands_dict)
 
     brand_cars = get_brand_cars("bmw",brands_dict)
+    listings_df = initialize_df_listings(brand_cars)
+    listings_df_clean = string_operations_listings(listings_df)
+    insert_listings(listings_df_clean)
 
     try:
-        load.initialize_tables()
-    except ValueError:
-        print("table initialization failed")
+        variants_df = get_variants_db()
+    except sqlalchemy.exc.ProgrammingError:
+        variants_df = pl.DataFrame()
 
-    for car in brand_cars:
-        listing_id = car['id']
-        if not check_listing_exists(listing_id):
-            load.insert_listing(list(car.values()))
-        variant_id = car['variant_id']
-        if not check_variant_exists(variant_id):
-            variant_info = api_scraper.get_variant_info(variant_id)
-            insert_variant(variant_id,variant_info)
+    if variants_df.is_empty():
+        variant_ids = listings_df_clean.get_column("variant_id").to_list()
+    else:
+        variant_ids = get_missing_variants(listings_df)
 
+    variants_data = get_variant_info(variant_ids)
+    variants_df_insert = initialize_df_variant(variants_data)
+    insert_variants(variants_df_insert)
+
+    print(get_variants_db().head())
 
 
 
