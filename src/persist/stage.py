@@ -6,6 +6,7 @@ db_url = "postgresql+psycopg2://postgres:Niki2004$@localhost:5432/usedcars2"
 engine = create_engine(db_url)
 
 def insert_listings(listings_df:pl.DataFrame)->None:
+    """insert a dataframe into the listings table"""
     with engine.connect() as conn:
         listings_df.write_database(
             table_name="listings_demo_2",
@@ -14,6 +15,7 @@ def insert_listings(listings_df:pl.DataFrame)->None:
         )
 
 def get_listings_db()->pl.DataFrame:
+    """get the listings table as a database"""
     with engine.connect() as conn:
         df = pl.read_database(
             connection=conn,
@@ -22,6 +24,7 @@ def get_listings_db()->pl.DataFrame:
     return df
 
 def insert_variants(variants_df:pl.DataFrame)->None:
+    """insert a variants df into the variants table"""
     with engine.connect() as conn:
         variants_df.write_database(
             table_name="variants_demo_2",
@@ -30,6 +33,7 @@ def insert_variants(variants_df:pl.DataFrame)->None:
         )
 
 def get_variants_db()->pl.DataFrame:
+    """get the variants table as a dataframe"""
     with engine.connect() as conn:
         df = pl.read_database(
             connection=conn,

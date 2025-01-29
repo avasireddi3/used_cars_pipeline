@@ -3,6 +3,7 @@ import json
 import type_classes
 
 def get_listings()->dict:
+    """get raw listings information from api"""
     #url to get listings info
     url = "https://listing.cardekho.com/api/v1/srp-listings"
     payload=""
@@ -38,6 +39,7 @@ def get_listings()->dict:
 
 #creating a mapping for how many cars there are in each brand from raw listings response
 def generate_brands_dict(listings:dict)->dict:
+    """generate a mapping of brand to number of listings"""
     brands_dict = {}
     types = ["popular", "luxury", "others"]
     for type in types:
@@ -47,6 +49,7 @@ def generate_brands_dict(listings:dict)->dict:
 
 #getting a list of all the listed cars by brand
 def get_brand_cars(brand:str,brands_dict:dict)->list:
+    """get listings info for all the cars of a brand"""
     brand_name = brand
     cnt = brands_dict[brand]
     cars=[]
@@ -57,14 +60,14 @@ def get_brand_cars(brand:str,brands_dict:dict)->list:
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
     }
     for i in range(0, cnt, 20):
-        frompage = i
+        from_page = i
         querystring = {f"cityId": "105",
                        "connectoid": "a223ce8e-09eb-2670-52c8-170d94d8ddad",
                        "sessionid": "c99f39fe3c0b18e3a027c0d3791ac0ed",
                        "lang_code": "en",
                        "regionId": "0",
                        "searchstring": {brand_name},
-                       "pagefrom": {frompage},
+                       "pagefrom": {from_page},
                        "sortby": "created_date",
                        "sortorder": "desc",
                        "mink": "",
