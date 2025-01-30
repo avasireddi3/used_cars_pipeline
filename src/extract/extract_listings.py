@@ -11,7 +11,7 @@ def extract_brands_mapping(listings: dict) -> dict:
             brands_mapping[brand["v"]] = brand["c"]
     return brands_mapping
 
-def extract_listings_info() -> dict:
+def brand_mapping() -> dict:
     """extract mapping of brands to number of listings from api"""
     # url to get listings info
     url = "https://listing.cardekho.com/api/v1/srp-listings"
@@ -58,7 +58,7 @@ def extract_listings_info() -> dict:
 
     return brands_mapping
 
-def extract_listings_data(brand: str, brands_mapping:dict)->list:
+def listings_data(brand: str, brands_mapping:dict)->list:
     """get listings info for all the cars of a brand"""
     brand_name = brand
     cnt = brands_mapping[brand]

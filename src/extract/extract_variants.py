@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def extract_variants_info(variant_ids:list):
+def variants_data(variant_ids:list):
     """get variants info for a given list of variant ids"""
     payload = ""
     url = "https://www.cardekho.com/api/v1/usedcar/specs"
