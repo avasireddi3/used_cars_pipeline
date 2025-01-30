@@ -1,55 +1,52 @@
 import polars as pl
 import sqlalchemy.exc
 
-from src.ingest import api_scraper
-from src.ingest.api_scraper import generate_brands_dict, get_brand_cars, get_variant_info
-from src.persist.stage import insert_listings, get_variants_db, insert_variants, get_missing_variants, get_listings_db, \
-    insert_unsold_listings, insert_sold_listings, get_sold_db
-from src.transform.transform_data import initialize_df_listings, string_operations_listings, initialize_df_variant, \
-    find_unsold, find_sold
-
+from src.extract import extract_listings, extract_variants
+from src.transform import transform_listings, transform_variants
+from src.load import load_listings, load_variants, load_status
+from src.stage import stage_status, stage_variants
 
 def main():
-    listings_raw = api_scraper.get_listings()
-    brands_dict = generate_brands_dict(listings_raw)
+    brands_mapping = extract_listings.brand_mapping()
 
     #TODO: see if processing can be asyncronized
 
     # for brand in brands_dict:
     #     brand_cars = get_brand_cars(brand, brands_dict)
 
-    brand_cars = get_brand_cars("bmw",brands_dict)
-    listings_df = initialize_df_listings(brand_cars)
-    listings_df_clean = string_operations_listings(listings_df)
-    insert_listings(listings_df_clean)
+    brand_listings = extract_listings.listings_data("bmw", brands_mapping)
+    brand_listings_clean = transform_listings.full_transform(brand_listings)
+    load_listings.insert_data(brand_listings_clean)
 
     try:
-        old_listings = get_listings_db()
+        old_listings = load_listings.read_data()
     except sqlalchemy.exc.ProgrammingError:
         old_listings = pl.DataFrame()
 
     if old_listings.is_empty():
-        unsold_ids = listings_df_clean.get_column("id").to_list()
-        insert_unsold_listings(unsold_ids)
+        unsold_ids = load_listings.read_data().get_column("id").to_list()
+        load_status.insert_unsold_data(unsold_ids)
     else:
-        unsold_ids = find_unsold(listings_df_clean,get_sold_db())
-        sold_ids = find_sold(listings_df_clean,old_listings)
-        insert_unsold_listings(unsold_ids)
-        insert_sold_listings(sold_ids)
+        unsold_ids = stage_status.find_unsold(brand_listings_clean,
+                                              load_status.read_sold())
+        sold_ids = stage_status.find_sold(brand_listings_clean,old_listings)
+        load_status.insert_sold_data(sold_ids)
+        load_status.insert_unsold_data(unsold_ids)
 
     try:
-        variants_df = get_variants_db()
+        variants_df = load_variants.read_data()
     except sqlalchemy.exc.ProgrammingError:
         variants_df = pl.DataFrame()
 
     if variants_df.is_empty():
-        variant_ids = listings_df_clean.get_column("variant_id").to_list()
+        variant_ids = brand_listings_clean.get_column("variant_id").to_list()
     else:
-        variant_ids = get_missing_variants(listings_df)
+        variant_ids = stage_variants.find_missing_variants(brand_listings_clean,
+                                                           variants_df)
 
-    variants_data = get_variant_info(variant_ids)
-    variants_df_insert = initialize_df_variant(variants_data)
-    insert_variants(variants_df_insert)
+    variants_data = extract_variants.variants_data(variant_ids)
+    variants_df_insert = transform_variants.initialize_df(variants_data)
+    load_variants.insert_data(variants_df_insert)
 
 
 
