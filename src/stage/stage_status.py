@@ -8,7 +8,8 @@ def find_sold(new_listings:pl.DataFrame,old_listings:pl.DataFrame)->list:
         left_on="id",
         right_on="id",
         suffix="_1",
-        how="left").
+        how="left",
+        coalesce=False).
         select("id","id_1").
         filter(pl.col("id_1").is_null()).
         get_column("id").
@@ -16,6 +17,7 @@ def find_sold(new_listings:pl.DataFrame,old_listings:pl.DataFrame)->list:
     return sold_ids
 
 def find_unsold(new_listings:pl.DataFrame,sold_status:pl.DataFrame)->list:
+    """find new unsold ids (new listings)"""
     unique_ids = sold_status.get_column("id").unique()
     sold_ids = pl.DataFrame(unique_ids)
     unsold_ids = (new_listings.join(
@@ -23,7 +25,9 @@ def find_unsold(new_listings:pl.DataFrame,sold_status:pl.DataFrame)->list:
         left_on="id",
         right_on="id",
         how="left",
-        suffix="_1").
+        suffix="_1",
+        coalesce=False).
+        select("id", "id_1").
         filter(pl.col("id_1").is_null()).
         get_column("id").
         to_list())

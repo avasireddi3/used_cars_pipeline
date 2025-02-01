@@ -1,5 +1,6 @@
 import requests
 import json
+from src.constants import extract_constants
 
 
 def extract_brands_mapping(listings: dict) -> dict:
@@ -14,15 +15,10 @@ def extract_brands_mapping(listings: dict) -> dict:
 def brand_mapping() -> dict:
     """extract mapping of brands to number of listings from api"""
     # url to get listings info
-    url = "https://listing.cardekho.com/api/v1/srp-listings"
+    url = extract_constants.listings_url
     payload = ""
     # headers for the request
-    headers = {
-        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
-        firstUTMParamter=direct%23none%23null""",
-        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
-        (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
-    }
+    headers = extract_constants.headers
     # query details specifying that we want all the cars in bengaluru
     querystring = {
         "cityId": "105",
@@ -63,14 +59,9 @@ def listings_data(brand: str, brands_mapping:dict)->list:
     brand_name = brand
     cnt = brands_mapping[brand]
     cars = []
-    url = "https://listing.cardekho.com/api/v1/srp-listings"
+    url = extract_constants.listings_url
     payload = ""
-    headers = {
-        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
-            firstUTMParamter=direct%23none%23null""",
-        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
-            (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
-    }
+    headers = extract_constants.headers
     for i in range(0, cnt, 20):
         from_page = i
         querystring = {

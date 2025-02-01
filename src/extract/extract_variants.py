@@ -1,17 +1,13 @@
 import requests
 import json
+from src.constants import extract_constants
 
 
 def variants_data(variant_ids:list):
     """get variants info for a given list of variant ids"""
     payload = ""
-    url = "https://www.cardekho.com/api/v1/usedcar/specs"
-    headers = {
-        "cookie": """cd_session_id=b4d275df-1a63-4456-8fd4-88da87f0795d;
-                       firstUTMParamter=direct%23none%23null""",
-        "User-Agent": """Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
-                       (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36""",
-    }
+    url = extract_constants.variants_url
+    headers = extract_constants.headers
     variants_info = []
     for variant_id in variant_ids:
 
