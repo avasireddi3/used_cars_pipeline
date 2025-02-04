@@ -1,0 +1,6 @@
+CREATE USER admin;
+
+CREATE DATABASE usedcars2;
+GRANT ALL PRIVILEGES ON DATABASE usedcars2 TO admin;
+
+ 
