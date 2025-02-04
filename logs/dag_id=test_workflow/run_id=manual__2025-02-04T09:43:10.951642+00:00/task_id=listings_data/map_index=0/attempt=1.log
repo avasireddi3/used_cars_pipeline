@@ -1,0 +1,39 @@
+[2025-02-04T09:43:15.449+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-02-04T09:43:15.468+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: test_workflow.listings_data manual__2025-02-04T09:43:10.951642+00:00 map_index=0 [queued]>
+[2025-02-04T09:43:15.477+0000] {taskinstance.py:2613} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: test_workflow.listings_data manual__2025-02-04T09:43:10.951642+00:00 map_index=0 [queued]>
+[2025-02-04T09:43:15.477+0000] {taskinstance.py:2866} INFO - Starting attempt 1 of 1
+[2025-02-04T09:43:15.487+0000] {taskinstance.py:2889} INFO - Executing <Mapped(_PythonDecoratedOperator): listings_data> on 2025-02-04 09:43:10.951642+00:00
+[2025-02-04T09:43:15.495+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=504) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-02-04T09:43:15.497+0000] {standard_task_runner.py:72} INFO - Started process 517 to run task
+[2025-02-04T09:43:15.497+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'test_workflow', 'listings_data', 'manual__2025-02-04T09:43:10.951642+00:00', '--job-id', '47', '--raw', '--subdir', 'DAGS_FOLDER/test_dag.py', '--cfg-path', '/tmp/tmpt814slrh', '--map-index', '0']
+[2025-02-04T09:43:15.497+0000] {standard_task_runner.py:105} INFO - Job 47: Subtask listings_data
+[2025-02-04T09:43:15.540+0000] {task_command.py:467} INFO - Running <TaskInstance: test_workflow.listings_data manual__2025-02-04T09:43:10.951642+00:00 map_index=0 [running]> on host bcbdac0c6b51
+[2025-02-04T09:43:15.651+0000] {taskinstance.py:3132} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='test_workflow' AIRFLOW_CTX_TASK_ID='listings_data' AIRFLOW_CTX_EXECUTION_DATE='2025-02-04T09:43:10.951642+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-02-04T09:43:10.951642+00:00'
+[2025-02-04T09:43:15.653+0000] {logging_mixin.py:190} INFO - Task instance is in running state
+[2025-02-04T09:43:15.653+0000] {logging_mixin.py:190} INFO -  Previous state of the Task instance: queued
+[2025-02-04T09:43:15.653+0000] {logging_mixin.py:190} INFO - Current task name:listings_data state:running start_date:2025-02-04 09:43:15.468994+00:00
+[2025-02-04T09:43:15.654+0000] {logging_mixin.py:190} INFO - Dag name:test_workflow and current dag run status:running
+[2025-02-04T09:43:15.654+0000] {taskinstance.py:731} INFO - ::endgroup::
+[2025-02-04T09:43:15.928+0000] {logging_mixin.py:190} INFO - (4345291, 7528, 'SUV', 'Bangalore', 4800000, 'Diesel', '36,000', 'Volvo', 'Volvo XC60', 'Automatic', 'second-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4337692, 6502, 'SUV', 'Bangalore', 1500000, 'Diesel', '50,000', 'Volvo', 'Volvo XC40', 'Automatic', 'fourth-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4328557, 5540, 'Hatchback', 'Bangalore', 1700000, 'Diesel', '50,000', 'Volvo', 'Volvo V40 Cross Country', 'Automatic', 'third-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4327070, 5500, 'Sedan', 'Bangalore', 3500000, 'Diesel', '55,100', 'Volvo', 'Volvo S90', 'Automatic', 'second-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4318504, 2061, 'Sedan', 'Bangalore', 1795000, 'Diesel', '87,526', 'Volvo', 'Volvo S60', 'Automatic', 'second-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4312028, 2073, 'Sedan', 'Bangalore', 1400000, 'Diesel', '86,858', 'Volvo', 'Volvo S60', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4311504, 7535, 'SUV', 'Bangalore', 3495000, 'Petrol', '30,000', 'Volvo', 'Volvo XC40', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4304279, 5500, 'Sedan', 'Chandigarh', 3350000, 'Diesel', '45,00,000', 'Volvo', 'Volvo S90', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4298057, 2092, 'SUV', 'Bangalore', 3725000, 'Diesel', '33,000', 'Volvo', 'Volvo XC40', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.929+0000] {logging_mixin.py:190} INFO - (4293686, 2085, 'SUV', 'Bangalore', 4500000, 'Diesel', '70,000', 'Volvo', 'Volvo XC 90', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.930+0000] {logging_mixin.py:190} INFO - (4279387, 2072, 'Sedan', 'Bangalore', 1200000, 'Diesel', '90,000', 'Volvo', 'Volvo S60', 'Automatic', 'first-owner')
+[2025-02-04T09:43:15.930+0000] {python.py:240} INFO - Done. Returned value was: [(4345291, 7528, 'SUV', 'Bangalore', 4800000, 'Diesel', '36,000', 'Volvo', 'Volvo XC60', 'Automatic', 'second-owner'), (4337692, 6502, 'SUV', 'Bangalore', 1500000, 'Diesel', '50,000', 'Volvo', 'Volvo XC40', 'Automatic', 'fourth-owner'), (4328557, 5540, 'Hatchback', 'Bangalore', 1700000, 'Diesel', '50,000', 'Volvo', 'Volvo V40 Cross Country', 'Automatic', 'third-owner'), (4327070, 5500, 'Sedan', 'Bangalore', 3500000, 'Diesel', '55,100', 'Volvo', 'Volvo S90', 'Automatic', 'second-owner'), (4318504, 2061, 'Sedan', 'Bangalore', 1795000, 'Diesel', '87,526', 'Volvo', 'Volvo S60', 'Automatic', 'second-owner'), (4312028, 2073, 'Sedan', 'Bangalore', 1400000, 'Diesel', '86,858', 'Volvo', 'Volvo S60', 'Automatic', 'first-owner'), (4311504, 7535, 'SUV', 'Bangalore', 3495000, 'Petrol', '30,000', 'Volvo', 'Volvo XC40', 'Automatic', 'first-owner'), (4304279, 5500, 'Sedan', 'Chandigarh', 3350000, 'Diesel', '45,00,000', 'Volvo', 'Volvo S90', 'Automatic', 'first-owner'), (4298057, 2092, 'SUV', 'Bangalore', 3725000, 'Diesel', '33,000', 'Volvo', 'Volvo XC40', 'Automatic', 'first-owner'), (4293686, 2085, 'SUV', 'Bangalore', 4500000, 'Diesel', '70,000', 'Volvo', 'Volvo XC 90', 'Automatic', 'first-owner'), (4279387, 2072, 'Sedan', 'Bangalore', 1200000, 'Diesel', '90,000', 'Volvo', 'Volvo S60', 'Automatic', 'first-owner')]
+[2025-02-04T09:43:15.947+0000] {taskinstance.py:340} INFO - ::group::Post task execution logs
+[2025-02-04T09:43:15.947+0000] {taskinstance.py:352} INFO - Marking task as SUCCESS. dag_id=test_workflow, task_id=listings_data, run_id=manual__2025-02-04T09:43:10.951642+00:00, map_index=0, execution_date=20250204T094310, start_date=20250204T094315, end_date=20250204T094315
+[2025-02-04T09:43:15.953+0000] {logging_mixin.py:190} INFO - Task instance in success state
+[2025-02-04T09:43:15.953+0000] {logging_mixin.py:190} INFO -  Previous state of the Task instance: running
+[2025-02-04T09:43:15.953+0000] {logging_mixin.py:190} INFO - Dag name:test_workflow queued_at:2025-02-04 09:43:10.974149+00:00
+[2025-02-04T09:43:15.953+0000] {logging_mixin.py:190} INFO - Task hostname:bcbdac0c6b51 operator:_PythonDecoratedOperator
+[2025-02-04T09:43:15.991+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 0
+[2025-02-04T09:43:16.015+0000] {taskinstance.py:3895} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-02-04T09:43:16.016+0000] {local_task_job_runner.py:245} INFO - ::endgroup::
