@@ -1,6 +1,7 @@
 import polars as pl
+from pathlib import Path
 from airflow.decorators import task
-from sqlalchemy import create_engine
+from airflow.operators.python import get_current_context
 
 
 
@@ -26,13 +27,16 @@ def initialize_df(data: list) -> pl.DataFrame:
 
 
 @task
-def full_transform(data:list)->tuple[int,int]:
-    db_url = "postgresql+psycopg2://airflow:airflow@postgres/airflow"
-    engine = create_engine(db_url)
+def full_transform(passed:tuple[str,list[tuple]])->tuple[int,int]:
+    brand=passed[0]
+    data=passed[1]
     df = initialize_df(data)
     df_final = df.with_columns(pl.col("mileage").str.replace_all(",", "").cast(pl.Int32))
-    with engine.connect() as conn:
-        df_final.write_database(
-            table_name="listings_demo_2", connection=conn, if_table_exists="replace"
-        )
+    df_final.write_csv(f"/sources/tmp/{brand}.csv",)
     return df_final.shape
+
+def main():
+    return NotImplemented
+
+if __name__=="__main__":
+    main()

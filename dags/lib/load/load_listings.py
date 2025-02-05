@@ -1,21 +1,26 @@
-import datetime
 import polars as pl
 from sqlalchemy import create_engine
+from airflow.decorators import task
 
-db_url = "postgresql+psycopg2://postgres:Niki2004$@localhost:5432/usedcars2"
+
+db_url = "postgresql+psycopg2://airflow:airflow@postgres/usedcars2"
 engine = create_engine(db_url)
 
-def read_data() -> pl.DataFrame:
+@task
+def read_data() -> None:
     """get the listings table as a database"""
     with engine.connect() as conn:
-        df = pl.read_database(connection=conn, query="SELECT * FROM listings_demo_2")
-    return df
+        df = pl.read_database(connection=conn, query="SELECT * FROM listings_staging")
+    print(df.shape)
+    pass
 
-def insert_data(listings_df: pl.DataFrame) -> None:
+@task
+def insert_data() -> None:
     """insert a dataframe into the listings table"""
+    listings_df = pl.scan_csv("/sources/tmp").collect()
     with engine.connect() as conn:
         listings_df.write_database(
-            table_name="listings_demo_2", connection=conn, if_table_exists="replace"
+            table_name="listings_staging", connection=conn, if_table_exists="replace"
         )
 
 
