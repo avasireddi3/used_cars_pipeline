@@ -1,4 +1,6 @@
 .idea
 *.json
+logs/*
 credentials_test.py
+tmp
 __pycache__
