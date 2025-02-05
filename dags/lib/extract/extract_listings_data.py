@@ -2,12 +2,15 @@ import requests
 import json
 from .extract_constants import listings_url,user_headers
 from airflow.decorators import task
+from airflow.operators.python import get_current_context
 
 
-@task
-def listings_data(brand_mapping:tuple)->list[tuple]:
+@task(map_index_template="{{brand_name}}")
+def listings_data(brand_mapping:tuple)->tuple[str,list[tuple]]:
     """get listings info for all the cars of a brand"""
     brand_name = brand_mapping[0]
+    context = get_current_context()
+    context["brand_name"] = brand_name
     cnt = brand_mapping[1]
     cars = []
     url = listings_url
@@ -59,4 +62,4 @@ def listings_data(brand_mapping:tuple)->list[tuple]:
             print(used_car)
             cars.append(used_car)
 
-    return cars
+    return brand_name,cars
