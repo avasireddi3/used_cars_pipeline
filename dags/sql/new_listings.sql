@@ -1,4 +1,4 @@
-INSERT INTO test_listings
+INSERT INTO test_new_listings
 SELECT ls.id,ls.variant_id,ls.body_type,
     ls.city,ls.price,ls.fuel_type,ls.mileage,
     ls.make,ls.model,ls.gear,ls.owner
