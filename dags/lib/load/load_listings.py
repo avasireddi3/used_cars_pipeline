@@ -17,7 +17,7 @@ def read_data() -> None:
 @task
 def insert_data() -> None:
     """insert a dataframe into the listings table"""
-    listings_df = pl.scan_csv("/sources/tmp").collect()
+    listings_df = pl.scan_csv("/sources/tmp/listings").collect()
     with engine.connect() as conn:
         listings_df.write_database(
             table_name="listings_staging", connection=conn, if_table_exists="replace"
