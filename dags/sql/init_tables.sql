@@ -12,6 +12,20 @@ CREATE TABLE IF NOT EXISTS test_listings
     owner varchar(30)
     );
 
+CREATE TABLE IF NOT EXISTS test_new_listings
+    (id int PRIMARY KEY,
+    variant_id int NOT NULL,
+    body_type varchar(30),
+    city varchar(30),
+    price int,
+    fuel_type varchar(30),
+    mileage int,
+    make varchar(60),
+    model varchar(100),
+    gear varchar(30),
+    owner varchar(30)
+    );
+
 CREATE TABLE IF NOT EXISTS test_variants
     (variant_id int PRIMARY KEY,
     engine_cc int,
@@ -34,3 +48,5 @@ CREATE TABLE IF NOT EXISTS test_status
     status varchar(10),
     update_time timestamp
     );
+
+TRUNCATE test_new_listings
