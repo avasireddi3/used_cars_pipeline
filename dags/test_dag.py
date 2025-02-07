@@ -1,14 +1,12 @@
 from airflow.decorators import dag
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.models.baseoperator import chain, chain_linear
 from pendulum import datetime
-from lib.load.load_listings import read_data
-from lib.extract.extract_brand_mapping import brand_mapping
-from lib.extract.extract_listings_data import listings_data
-from lib.extract.extract_variants import variants_data
-from lib.transform.transform_listings import full_transform_listings
-from lib.transform.transform_variants import full_transform_variants
-from lib.load.load_listings import insert_data
+from lib.extract.extract_brand_mapping import extract_brand_mapping
+from lib.extract.extract_listings import extract_stage_listings
+from lib.extract.extract_variants import extract_variants
+from lib.transform.transform_stage_listings import transform_stage_listings
+from lib.transform.transform_load_variants import transform_load_variants
+from lib.load.load_listings import load_listings
 
 @dag(
     start_date=datetime(2024,2,1),
@@ -39,7 +37,7 @@ def test_workflow():
     insert_new_listings = SQLExecuteQueryOperator(
         task_id = "insert_new_listings",
         conn_id = "postgres_default",
-        sql = "sql/insert_new_listings.sql"
+        sql = "sql/update_new_listings.sql"
     )
 
     update_sold_listings = SQLExecuteQueryOperator(
@@ -54,23 +52,15 @@ def test_workflow():
         sql = "sql/update_unsold_listings.sql"
     )
 
-    brands = brand_mapping()
-    data = listings_data.expand(brand_mapping=brands)
-    transformed_data = full_transform_listings.expand(passed=data)
-    variants = variants_data()
-    # chain_linear(transformed_data
-    #  ,insert_data()
-    #  ,init_tables
-    #  ,[find_new_listings,find_new_variants]
-    #  ,[update_sold_listings,
-    #    update_unsold_listings,
-    #    insert_new_listings,
-    #    variants_data()]
-    #  ,full_transform_variants())
-    transformed_data>>insert_data()>>init_tables>>[find_new_listings,find_new_variants]
+    brands = extract_brand_mapping()
+    data = extract_stage_listings.expand(brand_mapping=brands)
+    transformed_data = transform_stage_listings.expand(passed=data)
+    variants = extract_variants()
+
+    transformed_data >> load_listings() >> init_tables >> [find_new_listings, find_new_variants]
     find_new_listings>>[update_sold_listings,update_unsold_listings,insert_new_listings]
     find_new_variants>>variants
-    full_transform_variants(variants)
+    transform_load_variants(variants)
 
 
 test_workflow()

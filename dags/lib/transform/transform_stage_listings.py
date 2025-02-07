@@ -25,7 +25,7 @@ def initialize_df(data: list) -> pl.DataFrame:
 
 
 @task
-def full_transform_listings(passed:tuple[str,int])->tuple[int,int]:
+def transform_stage_listings(passed:tuple[str,int])->tuple[int,int]:
     brand=passed[0]
     data=pl.read_csv(f"/sources/tmp/listings/{brand}_stage_1.csv")
     df = initialize_df(data)

@@ -1,6 +1,6 @@
 import requests
 import json
-from .extract_constants import listings_url,user_headers
+from .constants import listings_url,user_headers
 from airflow.decorators import task
 
 
@@ -14,7 +14,7 @@ def extract_brands_mapping(listings: dict) -> list[tuple]:
     return brands_mapping
 
 @task
-def brand_mapping() -> list[tuple]:
+def extract_brand_mapping() -> list[tuple]:
     """extract mapping of brands to number of listings from api"""
     # url to get listings info
     url = listings_url

@@ -1,7 +1,7 @@
 import requests
 import json
 import polars as pl
-from .extract_constants import listings_url,user_headers
+from .constants import listings_url,user_headers
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 
@@ -29,7 +29,7 @@ def stage_listings(brand:str,data:list[tuple]):
 
 
 @task(map_index_template="{{brand_name}}")
-def listings_data(brand_mapping:tuple)->tuple[str,int]:
+def extract_stage_listings(brand_mapping:tuple)->tuple[str,int]:
     """get listings info for all the cars of a brand"""
     brand_name = brand_mapping[0]
     context = get_current_context()

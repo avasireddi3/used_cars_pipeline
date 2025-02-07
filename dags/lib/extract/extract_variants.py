@@ -1,12 +1,12 @@
 import requests
 import json
-from .extract_constants import variants_url,user_headers
+from .constants import variants_url,user_headers
 from airflow.decorators import task
 import polars as pl
 from sqlalchemy import create_engine
 
 @task
-def variants_data(**context):
+def extract_variants(**context):
     """get variants info for a given list of variant ids"""
     payload = ""
     url = variants_url

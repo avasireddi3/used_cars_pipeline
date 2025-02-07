@@ -39,7 +39,7 @@ def string_operations(df: pl.DataFrame) -> pl.DataFrame:
     )
 
 @task
-def full_transform_variants(*args,**kwargs)->tuple[int,int]:
+def transform_load_variants(*args, **kwargs)->tuple[int,int]:
     db_url = "postgresql+psycopg2://airflow:airflow@postgres/usedcars2"
     engine = create_engine(db_url)
     df = pl.read_csv("/sources/tmp/variants/new_variants.csv")
