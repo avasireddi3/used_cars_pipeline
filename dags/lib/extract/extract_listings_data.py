@@ -1,12 +1,35 @@
 import requests
 import json
+import polars as pl
 from .extract_constants import listings_url,user_headers
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 
 
+def stage_listings(brand:str,data:list[tuple]):
+    df = pl.DataFrame(
+        data,
+        schema={
+            "id": pl.Int32,
+            "variant_id": pl.Int32,
+            "body_type": pl.String,
+            "city": pl.String,
+            "price": pl.String,
+            "fuel_type": pl.String,
+            "mileage": pl.String,
+            "make": pl.String,
+            "model": pl.String,
+            "gear": pl.String,
+            "owner": pl.String,
+        },
+        orient="row",
+    )
+    df.write_csv(f"/sources/tmp/listings/{brand[0]}_stage_1.csv")
+
+
+
 @task(map_index_template="{{brand_name}}")
-def listings_data(brand_mapping:tuple)->tuple[str,list[tuple]]:
+def listings_data(brand_mapping:tuple)->tuple[str,int]:
     """get listings info for all the cars of a brand"""
     brand_name = brand_mapping[0]
     context = get_current_context()
@@ -59,7 +82,8 @@ def listings_data(brand_mapping:tuple)->tuple[str,list[tuple]]:
                 car["tt"],
                 car["ownerSlug"],
             )
-            print(used_car)
             cars.append(used_car)
 
-    return brand_name,cars
+    stage_listings(brand_name,cars)
+
+    return brand_name[0],len(cars)

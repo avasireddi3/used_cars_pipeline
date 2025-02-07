@@ -27,7 +27,7 @@ def test_workflow():
     find_new_listings = SQLExecuteQueryOperator(
         task_id = "find_new_listings",
         conn_id = "postgres_default",
-        sql = "sql/new_listings.sql"
+        sql = "sql/find_new_listings.sql"
     )
 
     find_new_variants = SQLExecuteQueryOperator(

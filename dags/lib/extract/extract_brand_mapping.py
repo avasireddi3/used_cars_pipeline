@@ -54,7 +54,7 @@ def brand_mapping() -> list[tuple]:
 
     brands_mapping = extract_brands_mapping(response)
 
-    return brands_mapping[15:16]
+    return brands_mapping[13:14]
 
 
 
